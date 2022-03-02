@@ -4,3 +4,5 @@ export default {
     expiresIn: '1d'
   }
 }
+
+//Para o jest reconhecer as variáveis de ambiente do ".env" era necessário acrescentar a seguinte configuração ao arquivo "jest.config.ts": setupFiles: ['dotenv/config']

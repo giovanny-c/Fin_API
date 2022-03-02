@@ -4,6 +4,8 @@ import { sign } from 'jsonwebtoken';
 
 import authConfig from '../../../../config/auth';
 
+
+
 import { IUsersRepository } from "../../repositories/IUsersRepository";
 import { IAuthenticateUserResponseDTO } from "./IAuthenticateUserResponseDTO";
 import { IncorrectEmailOrPasswordError } from "./IncorrectEmailOrPasswordError";
@@ -18,12 +20,12 @@ export class AuthenticateUserUseCase {
   constructor(
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
-  ) {}
+  ) { }
 
   async execute({ email, password }: IRequest): Promise<IAuthenticateUserResponseDTO> {
     const user = await this.usersRepository.findByEmail(email);
 
-    if(!user) {
+    if (!user) {
       throw new IncorrectEmailOrPasswordError();
     }
 
@@ -34,6 +36,8 @@ export class AuthenticateUserUseCase {
     }
 
     const { secret, expiresIn } = authConfig.jwt;
+
+    //Para o jest reconhecer as variáveis de ambiente do ".env" era necessário acrescentar a seguinte configuração ao arquivo "jest.config.ts": setupFiles: ['dotenv/config']
 
     const token = sign({ user }, secret, {
       subject: user.id,
