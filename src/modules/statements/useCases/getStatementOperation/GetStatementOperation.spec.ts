@@ -3,9 +3,10 @@ import { InMemoryStatementsRepository } from "../../repositories/in-memory/InMem
 
 import { CreateUserUseCase } from "../../../users/useCases/createUser/CreateUserUseCase"
 
-import { CreateStatementUseCase } from "./CreateStatementUseCase"
+import { CreateStatementUseCase } from "../createStatement/CreateStatementUseCase"
 
 import { OperationType } from "../../entities/Statement"
+import { GetStatementOperationUseCase } from "./GetStatementOperationUseCase"
 
 
 
@@ -16,6 +17,8 @@ let inMemoryUsersRepository: InMemoryUsersRepository
 let createStatementUseCase: CreateStatementUseCase
 
 let createUserUseCase: CreateUserUseCase
+
+let getStatementOperationUseCase: GetStatementOperationUseCase
 
 
 
@@ -28,7 +31,7 @@ describe("Create a deposit or withdraw statement", () => {
         inMemoryUsersRepository = new InMemoryUsersRepository()
         createStatementUseCase = new CreateStatementUseCase(inMemoryUsersRepository, inMemoryStatementsRepository)
         createUserUseCase = new CreateUserUseCase(inMemoryUsersRepository)
-
+        getStatementOperationUseCase = new GetStatementOperationUseCase(inMemoryUsersRepository, inMemoryStatementsRepository)
 
     })
 
@@ -42,39 +45,20 @@ describe("Create a deposit or withdraw statement", () => {
 
         const createdUser = await createUserUseCase.execute({ name: user.name, email: user.email, password: user.password })
 
-        const id = createdUser.id as string
+        const user_id = createdUser.id as string
 
-        const balance = await createStatementUseCase.execute({ user_id: id, type: "deposit" as OperationType, amount: 100, description: "test" })
+        const statement = await createStatementUseCase.execute({ user_id, type: "deposit" as OperationType, amount: 100, description: "test" })
 
-        expect(balance).toHaveProperty("id")
-        expect(balance.amount).toEqual(100)
-        expect(balance.type).toEqual("deposit")
+        const operation_id = statement.id as string
 
+        const operation = await getStatementOperationUseCase.execute({ user_id: statement.user_id, statement_id: operation_id })
 
-    })
-
-    it("Should create a withdraw statement for a user", async () => {
-
-        const user = {
-            name: "tester",
-            email: "test@test.com",
-            password: "test123"
-        }
-
-        const createdUser = await createUserUseCase.execute({ name: user.name, email: user.email, password: user.password })
-
-        const id = createdUser.id as string
-
-        await createStatementUseCase.execute({ user_id: id, type: "deposit" as OperationType, amount: 100, description: "test" })
-
-        const balance = await createStatementUseCase.execute({ user_id: id, type: "withdraw" as OperationType, amount: 50, description: "test" })
-
-        expect(balance).toHaveProperty("id")
-        expect(balance.amount).toEqual(50)
-        expect(balance.type).toEqual("withdraw")
+        expect(operation).toHaveProperty("id")
+        expect(operation.type).toEqual("deposit")
 
 
     })
+
 
 
 
