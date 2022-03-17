@@ -48,6 +48,8 @@ export class StatementsRepository implements IStatementsRepository {
       where: { user_id }
     });
 
+    console.log(statement)
+
     const balance = statement.reduce((acc, operation) => {
 
       if (operation.type === 'deposit' || (operation.type === 'transfer' && operation.user_id != operation.sender_id)/**/) {
