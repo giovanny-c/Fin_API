@@ -25,6 +25,13 @@ export class usersTable1616681812086 implements MigrationInterface {
           type: 'varchar',
         },
         {
+          name: 'balance',
+          type: 'decimal',
+          precision: 5,
+          scale: 2,
+
+        },
+        {
           name: 'created_at',
           type: 'timestamp',
           default: 'now()'
