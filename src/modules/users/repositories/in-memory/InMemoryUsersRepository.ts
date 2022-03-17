@@ -4,6 +4,9 @@ import { ICreateUserDTO } from "../../useCases/createUser/ICreateUserDTO";
 import { IUsersRepository } from "../IUsersRepository";
 
 export class InMemoryUsersRepository implements IUsersRepository {
+  changeBalance(user_id: string, balance: number): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
   private users: User[] = [];
 
   async findByEmail(email: string): Promise<User | undefined> {
